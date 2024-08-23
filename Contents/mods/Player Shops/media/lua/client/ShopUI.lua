@@ -19,6 +19,7 @@ function ShopMenu:initialise()
     ISPanel.initialise(self)
 
     -- style
+    -- syntax borrowed from various IS (Indie Stone) scripts
     local buttonWidth = 100
     local buttonHeight = 25
     local padding = {
@@ -31,7 +32,7 @@ function ShopMenu:initialise()
     local listHeight = 250
     local tabWidth = 40
     local tabHeight = 18
-    local defaultZomboidBorder = {r=1, g=1, b=1, a=0.4}
+    local defaultZomboidBorder = {r=1, g=1, b=1, a=0.4} -- the familiar off-white border Zomboid uses
 
     -- close menu button
     self.no = ISButton:new(10, self:getHeight() - padding.bottom - buttonHeight, buttonWidth, buttonHeight,"Cancel", self, ShopMenu.onClick)
