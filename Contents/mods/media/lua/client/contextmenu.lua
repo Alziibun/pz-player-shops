@@ -53,13 +53,14 @@ ShopMenu.doShopMenu = function(player, context, worldobjects, test)
                 local registerContainer = submenu:getNew(submenu)
                 context:addSubMenu(addRegisterOption, registerContainer)
                 for _, object in pairs(worldobjects) do
+                    -- make sure the user isn't doing something stupid
                     local container = object:getContainer()
                     if container
                     and not instanceof(object, "IsoDeadBody")
                     and not instanceof(object, "IsoCompost")
-                    and not instanceof(object, "Clothing")
+                    and not instanceof(object, "Clothing") -- stuff like backpacks
                     then
-                        -- get name of the object using moveable api
+                        -- get name of the object using moveable api and put it in the context menu
                         local moveprops = ISMoveableSpriteProps.fromObject(object)
                         registerContainer:addOption(moveprops.name, {object}, ShopMenu.onSetRegister) -- register list
                     end

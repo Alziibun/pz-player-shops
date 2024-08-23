@@ -2,7 +2,9 @@ ShopUIManager = {}
 ShopUIManager.shop = {}
 
 local function validate(shop_id)
+    -- check if shop ID is being managed by the UI Manager
     if not ShopUIManager.shop[shop_id] then
+        -- if not, create a new listing for it
         ShopUIManager.shop[shop_id] = {}
     end
 end
@@ -33,6 +35,7 @@ function ShopUIManager.ShowAllLabels(shop_id)
 end
 
 function ShopUIManager.onPlayerUpdated(player)
+    -- wait for player to enter a shop
     local shop = Shop.find(player)
     if shop then
         local register = shop:getRegister()
