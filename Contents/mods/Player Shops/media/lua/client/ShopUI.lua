@@ -1,7 +1,7 @@
 require "Economy"
 ---@class ShopUI : ISPanel
 ShopMenu = ISPanel:derive("ShopUI")
-ShopMenu.windows = {}
+ShopMenu.UI = {}
 
 local good = {
     r = getCore():getGoodHighlitedColor():getR(),
@@ -34,7 +34,8 @@ function ShopMenu:initialise()
     local tabHeight = 18
     local defaultZomboidBorder = {r=1, g=1, b=1, a=0.4} -- the familiar off-white border Zomboid uses
 
-    -- close menu button
+    --TODO: determine size for menu background
+    -- cancel menu button
     self.no = ISButton:new(10, self:getHeight() - padding.bottom - buttonHeight, buttonWidth, buttonHeight,"Cancel", self, ShopMenu.onClick)
     self.no.internal = "CANCEL"
     self.no:initialise()
@@ -102,7 +103,7 @@ function ShopMenu:initialise()
     self.cost = nil -- how much the cart costs total
 end
 
-function ShopMenu:new(x, y, width, height, player)
+function ShopMenu:new(x, y, width, height)
     local o = {}
     x = getCore():getScreenWidth() / 2 - (width / 2)
     y = getCore():getScreenHeight() / 2 - (height / 2)
@@ -116,12 +117,11 @@ function ShopMenu:new(x, y, width, height, player)
     o.listHeaderColor = {r=0.4, g=0.4, b=0.4, a=0.3};
     o.width = width
     o.height = height
-    o.player = player
     o.moveWithMouse = true
     o.offers = nil
     o.cart = nil
     o.shop = nil
-    ShopMenu.windows[player] = o
+    ShopMenu.UI = o
     return o
 end
 
