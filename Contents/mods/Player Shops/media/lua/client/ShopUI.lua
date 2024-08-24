@@ -1,7 +1,7 @@
 require "Economy"
 ---@class ShopUI : ISPanel
 ShopMenu = ISPanel:derive("ShopUI")
-ShopMenu.UI = {}
+ShopMenu
 
 local good = {
     r = getCore():getGoodHighlitedColor():getR(),
@@ -105,83 +105,30 @@ end
 
 function ShopMenu:new(x, y, width, height)
     local o = {}
-    x = getCore():getScreenWidth() / 2 - (width / 2)
-    y = getCore():getScreenHeight() / 2 - (height / 2)
-    width = 350
-    height = 450
+    -- center UI
     o = ISPanel:new(x, y, width, height)
     setmetatable(o, self)
     self.__index = self
+    -- use vanilla zomboid parameters
     o.borderColor = {r=0.4, g=0.4, b=0.4, a=1}
     o.backgroundColor = {r=0, g=0, b=0, a=0.8};
     o.listHeaderColor = {r=0.4, g=0.4, b=0.4, a=0.3};
-    o.width = width
-    o.height = height
+    o.width = 350
+    o.height = 450
     o.moveWithMouse = true
-    o.offers = nil
-    o.cart = nil
-    o.shop = nil
-    ShopMenu.UI = o
     return o
 end
 
 function ShopMenu:prerender()
-    self:drawRect(0, 0, self.width, self.height, self.backgroundColor.a, self.backgroundColor.r, self.backgroundColor.g, self.backgroundColor.b)
+    -- draw shop border
+    self:drawRect(self.x, self.y, self.width, self.height, self.backgroundColor.a, self.backgroundColor.r, self.backgroundColor.g, self.backgroundColor.b)
     -- draw the shop name
     self:drawText(
             "Shop",
             self.width/2 - (getTextManager():MeasureStringX(UIFont.Medium, "Shop") / 2),
-            z, 1, 1,1, 1, UIFont.Medium) -- why is this callback so irritatingly long?
-
-    -- totals
-    local totalsHeight = getTextManager():MeasureStringY(UIFont.Medium, "T")
-    local cartEnd = self.cart.y + self.cart:getHeight() + padding.bottom
-    self:drawText(
-            "Checkout",
-            self.cart.x,
-            cartEnd, 1, 1, 1, 1, UIFont.Medium)
-    self:drawText(
-            "Total Funds:",
-            self.cart.x,
-            cartEnd + totalsHeight + padding.bottom, 1, 1, 1, 1, UIFont.Medium)
-    self:drawText(
-            "Total Cost:",
-            self.cart.x,
-            cartEnd + (totalsHeight + padding.bottom) * 2, 1, 1, 1, 1, UIFont.Medium)
-    self:drawText(
-            "Remainder:",
-            self.cart.x,
-            cartEnd + (totalsHeight + padding.bottom) * 3, 1, 1, 1, 1, UIFont.Medium)
-end
-
-function ShopMenu.onClick(button)
-    if button.internal == "CANCEL" then
-        self:removeFromUIManager()
-        self:setVisible(false)
-    end
-    if button.internal == "CONFIRM" then
-        -- TODO add buy/sell to button
-    end
-    if button.internal == "EDIT" then
-        -- TODO wow
-    end
-    if button.internal == "SETTINGS" then
-        -- TODO permission settings menu
-    end
-end
-
-function ShopMenu:getFunds()
-
-end
-
-function ShopMenu:onPurchase(option, enabled)
-    -- TODO: when a player buys something
-end
-
-function ShopMenu:onSell(option, enabled)
-    -- TODO: idk
-end
-
-function ShopMenu:populate()
-    -- TODO: load all items
+            z, 1, 1,1, 1, UIFont.Medium)
+    -- TODO: register icon space
+    -- TODO: line break under title
+    -- TODO: slogan space (paragraph area)
+    -- TODO: listing section (to be decided)
 end
