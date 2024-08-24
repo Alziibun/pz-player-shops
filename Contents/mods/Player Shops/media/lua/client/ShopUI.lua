@@ -1,4 +1,3 @@
-require "Economy"
 ---@class ShopUI : ISPanel
 ShopMenu = ISPanel:derive("ShopUI")
 ShopMenu
@@ -34,7 +33,6 @@ function ShopMenu:initialise()
     local tabHeight = 18
     local defaultZomboidBorder = {r=1, g=1, b=1, a=0.4} -- the familiar off-white border Zomboid uses
 
-    --TODO: determine size for menu background
     -- cancel menu button
     self.no = ISButton:new(10, self:getHeight() - padding.bottom - buttonHeight, buttonWidth, buttonHeight,"Cancel", self, ShopMenu.onClick)
     self.no.internal = "CANCEL"
