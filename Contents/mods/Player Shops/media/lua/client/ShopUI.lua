@@ -1,6 +1,5 @@
 ---@class ShopUI : ISPanel
-ShopMenu = ISPanel:derive("ShopUI")
-ShopMenu
+ShopUI = ISPanel:derive("ShopUI")
 
 local good = {
     r = getCore():getGoodHighlitedColor():getR(),
@@ -14,7 +13,7 @@ local bad = {
     b = getCore():getBadHighlitedColor():getB()
 }
 
-function ShopMenu:initialise()
+function ShopUI:initialise()
     ISPanel.initialise(self)
 
     -- style
@@ -32,76 +31,10 @@ function ShopMenu:initialise()
     local tabWidth = 40
     local tabHeight = 18
     local defaultZomboidBorder = {r=1, g=1, b=1, a=0.4} -- the familiar off-white border Zomboid uses
-
-    -- cancel menu button
-    self.no = ISButton:new(10, self:getHeight() - padding.bottom - buttonHeight, buttonWidth, buttonHeight,"Cancel", self, ShopMenu.onClick)
-    self.no.internal = "CANCEL"
-    self.no:initialise()
-    self.no:instantiate()
-    self.no.borderColor = defaultZomboidBorder
-    self:addChild(self.no)
-
-    -- the confirm button buy/sell
-    self.yes = ISButton:new(120, self:getHeight() - padding.bottom - buttonHeight, buttonWidth, buttonHeight, "Checkout", self, ShopMenu.onClick)
-    self.yes.internal = "CONFIRM"
-    self.yes:initialise()
-    self.yes:instantiate()
-    self.yes.borderColor = defaultZomboidBorder
-    self:addChild(self.yes)
-
-    -- the item listing
-    self.offers = ISScrollingListBox:new(10, 70, listWidth, listHeight)
-    self.offers:initialise()
-    self.offers:instantiate()
-    self.offers.itemheight = 25
-    self.offers.selected = 0
-    self.offers.joypadParent = self
-    self.offers.font = UIFont.NewSmall
-    self.offers.drawBorder = true
-    self:addChild(self.offers)
-
-    -- the cart
-    self.cart = ISScrollingListBox:new(self.offers.x + self.offers.width + 10, self.offers.y, listWidth, listHeight)
-    self.cart:initialise()
-    self.cart:instantiate()
-    self.cart.itemheight = 25
-    self.cart.selected = 0
-    self.cart.joypadParent = self
-    self.cart.font = UIFont.NewSmall
-    self:addChild(self.cart)
-
-    -- edit listing tab
-    self.edititems = ISButton:new(
-            self.offers.x,
-            self.offers.y + self.offers:getHeight() + tabHeight + padding.top,
-            tabWidth,
-            tabHeight,
-            "Edit",
-            self, ShopMenu.onClick)
-    self.edititems:initialise()
-    self.edititems:instantiate()
-    self.edititems.borderColor = defaultZomboidBorder
-
-    self:addChild(self.edititems)
-
-    -- shows how much money the player has total
-    local mon = Economy.getWorth(self.player)
-    print(mon)
-    self.myCash = ISLabel:new(
-            self.cart.x + self.cart:getWidth() - padding.right - getTextManager():MeasureStringX(UIFont.Medium, "$" .. mon),
-            self.cart.y + self.cart:getHeight(),
-            tabHeight,
-            "$" .. mon,
-            good.r, good.g, good.b, 1,
-            UIFont.Medium)
-    self.myCash:initialise()
-    self.myCash:instantiate()
-    self:addChild(self.myCash)
-
-    self.cost = nil -- how much the cart costs total
+    -- TODO: start writing buttons code
 end
 
-function ShopMenu:new(x, y, width, height)
+function ShopUI:new(x, y, width, height)
     local o = {}
     -- center UI
     o = ISPanel:new(x, y, width, height)
@@ -117,7 +50,8 @@ function ShopMenu:new(x, y, width, height)
     return o
 end
 
-function ShopMenu:prerender()
+function ShopUI:prerender()
+    -- draw the base components of the GUI like background and names
     -- draw shop border
     self:drawRect(self.x, self.y, self.width, self.height, self.backgroundColor.a, self.backgroundColor.r, self.backgroundColor.g, self.backgroundColor.b)
     -- draw the shop name
@@ -125,8 +59,23 @@ function ShopMenu:prerender()
             "Shop",
             self.width/2 - (getTextManager():MeasureStringX(UIFont.Medium, "Shop") / 2),
             z, 1, 1,1, 1, UIFont.Medium)
+
     -- TODO: register icon space
     -- TODO: line break under title
     -- TODO: slogan space (paragraph area)
     -- TODO: listing section (to be decided)
 end
+
+function ShopUI.onGameStart()
+    -- develop the GUI after the game starts
+    local width, height = 350, 480
+    -- center the UI
+    local x = getCore():getScreenHeight() / 2 - (height / 2)
+    local y = getCore():getScreenWidth() / 2 - (width / 2)
+    local s = ShopUI:new(x, y, width, height)
+    s:prerender()
+    s:initialise()
+    s:setEnabled(true)
+end
+
+Events.OnGameStart.Add(ShopUI.onGameStart)
