@@ -311,10 +311,11 @@ function Shop.fromPlayer(player)
 end
 
 ---@param square IsoGridSquare the square to search from
-function Shop.find(square)
-    local region = square:getIsoWorldRegion()
-    if region:isEnclosed() then
-        local building = Building:get(square:getX(), square:getY(), square:getZ())
+---@return Shop
+function Shop.fromRoom(square)
+    local room = square:getRoom()
+    if room then
+        local building = room:getBuilding()
         local containers = building:getContainers(region:getID())
         for _, container in pairs(containers) do
             local modData = container.object:getModData()
@@ -327,6 +328,15 @@ function Shop.find(square)
             end
         end
     end
+end
+
+---@param square IsoGridSquare the square to search from
+---@return Shop
+function Shop.fromRegion(square)
+    -- get a shop from the square's region, only searches the immediate region
+    local region = square:getIsoWorldRegion()
+    assert(region, "Unable to find region from square")
+    local squares = RegionHelper.getSquares(square)
 end
 
 ---load the instance from a file

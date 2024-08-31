@@ -8,66 +8,72 @@ local shop = nil
 ---@param test boolean
 ShopMenu.doShopMenu = function(player, context, worldobjects, test)
     -- operate the context menu for shops
-    -- check if player is inside a shop
+    -- first, look for any valid shops
     player = getSpecificPlayer(player)
     local square = player:getSquare()
-    local region = square:getIsoWorldRegion()
-    if region:isEnclosed() then
-        -- only allow shops to made in walled areas
-        shop = Shop.find(square)
-        local option = context:addOption("Shop", worldobjects, nil)
-        local submenu = ISContextMenu:getNew(context)
-        context:addSubMenu(option, submenu)
-        if not shop then
-            local setup = submenu:addOption("Setup Shop", nil, ShopMenu.setupShop, player, region)
-        else
-            if shop:getRegister() ~= nil then
-                -- check for shop's register
-                local register = shop:getRegister()
-                local goToRegister = submenu:addOption("Go to Register", nil, ShopMenu.goToRegister, player, building)
-                if shop:hasPermission(player, "setStockpile") then
-                    -- stockpiles
-                    local addStockpileOption = submenu:addOption("Add to Stockpiles", worldobjects, nil)
-                    local stockpileContainer = submenu;getNew(submenu)
-                    context:addSubMenu(addStockpileOption, stockpileContainer)
-                    for _, object in pairs(worldobjects) do
-                        local container = object:getContainer()
-                        -- stockpiles cannot be dead bodies, backpacks, registers (obviously) or compost because of their intrinsic mechanic
-                        -- TODO: make logic function for valid containers
-                        if container
-                        and not instanceof(object, 'IsoDeadBody')
-                        and not instanceof(object, 'IsoCompost')
-                        and not instanceof(object, 'Clothing')
-                        and container:getID() ~= register:getID()
-                        then
-                            -- get the name of the object using moveable api
-                            local moveprops = ISMoveableSpriteProps.fromObject(object)
-                            stockpileContainer:addOption(moveprops.name, {object}, ShopMenu.onSetStockpile) -- stockpile list
-                        end
-                    end
-                end
-            end
-            if shop.owner == player:getUsername() then
-                -- only the owner may set the register
-                local addRegisterOption = submenu:addOption("Set as Register", worldobjects, nil)
-                local registerContainer = submenu:getNew(submenu)
-                context:addSubMenu(addRegisterOption, registerContainer)
+    room = square:getRoom()
+    region = square:getIsoWorldRegion()
+    if room and not region then
+        if not room:isInside(square:getX(), square:getY(), square:getZ()) then
+            return print("This square isn't inside the room.")
+        end
+        elseif region then
+        assert(region:isEnclosed(), "The region must be enclosed to use Shop features.")
+        RegionDef:initSquares(square)
+    end
+ --[[   shop = Shop.find(player.square)
+    local option = context:addOption("Shop", worldobjects, nil)
+    local submenu = ISContextMenu:getNew(context)
+    context:addSubMenu(option, submenu)
+    if not shop then
+        local setup = submenu:addOption("Setup Shop", nil, ShopMenu.setupShop, player, region)
+    else
+        if shop:getRegister() ~= nil then
+            -- check for shop's register
+            local register = shop:getRegister()
+            local goToRegister = submenu:addOption("Go to Register", nil, ShopMenu.goToRegister, player, building)
+            if shop:hasPermission(player, "setStockpile") then
+                -- stockpiles
+                local addStockpileOption = submenu:addOption("Add to Stockpiles", worldobjects, nil)
+                local stockpileContainer = submenu;getNew(submenu)
+                context:addSubMenu(addStockpileOption, stockpileContainer)
                 for _, object in pairs(worldobjects) do
-                    -- make sure the user isn't doing something stupid
                     local container = object:getContainer()
+                    -- stockpiles cannot be dead bodies, backpacks, registers (obviously) or compost because of their intrinsic mechanic
+                    -- TODO: make logic function for valid containers
                     if container
-                    and not instanceof(object, "IsoDeadBody")
-                    and not instanceof(object, "IsoCompost")
-                    and not instanceof(object, "Clothing") -- stuff like backpacks
+                    and not instanceof(object, 'IsoDeadBody')
+                    and not instanceof(object, 'IsoCompost')
+                    and not instanceof(object, 'Clothing')
+                    and container:getID() ~= register:getID()
                     then
-                        -- get name of the object using moveable api and put it in the context menu
+                        -- get the name of the object using moveable api
                         local moveprops = ISMoveableSpriteProps.fromObject(object)
-                        registerContainer:addOption(moveprops.name, {object}, ShopMenu.onSetRegister) -- register list
+                        stockpileContainer:addOption(moveprops.name, {object}, ShopMenu.onSetStockpile) -- stockpile list
                     end
                 end
             end
         end
-    end
+        if shop.owner == player:getUsername() then
+            -- only the owner may set the register
+            local addRegisterOption = submenu:addOption("Set as Register", worldobjects, nil)
+            local registerContainer = submenu:getNew(submenu)
+            context:addSubMenu(addRegisterOption, registerContainer)
+            for _, object in pairs(worldobjects) do
+                -- make sure the user isn't doing something stupid
+                local container = object:getContainer()
+                if container
+                and not instanceof(object, "IsoDeadBody")
+                and not instanceof(object, "IsoCompost")
+                and not instanceof(object, "Clothing") -- stuff like backpacks
+                then
+                    -- get name of the object using moveable api and put it in the context menu
+                    local moveprops = ISMoveableSpriteProps.fromObject(object)
+                    registerContainer:addOption(moveprops.name, {object}, ShopMenu.onSetRegister) -- register list
+                end
+            end
+        end
+    end]]
 end
 
 ShopMenu.goToRegister = function(_, player, building)
