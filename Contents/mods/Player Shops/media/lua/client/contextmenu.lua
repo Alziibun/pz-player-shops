@@ -11,17 +11,10 @@ ShopMenu.doShopMenu = function(player, context, worldobjects, test)
     -- first, look for any valid shops
     player = getSpecificPlayer(player)
     local square = player:getSquare()
+    -- currently only supports meta buildings
     room = square:getRoom()
-    region = square:getIsoWorldRegion()
-    if room and not region then
-        if not room:isInside(square:getX(), square:getY(), square:getZ()) then
-            return print("This square isn't inside the room.")
-        end
-        elseif region then
-        assert(region:isEnclosed(), "The region must be enclosed to use Shop features.")
-        RegionDef:initSquares(square)
-    end
- --[[   shop = Shop.find(player.square)
+    if room then return end -- if there is no room end early
+    shop = Shop.fromRoom(square)
     local option = context:addOption("Shop", worldobjects, nil)
     local submenu = ISContextMenu:getNew(context)
     context:addSubMenu(option, submenu)
@@ -35,7 +28,7 @@ ShopMenu.doShopMenu = function(player, context, worldobjects, test)
             if shop:hasPermission(player, "setStockpile") then
                 -- stockpiles
                 local addStockpileOption = submenu:addOption("Add to Stockpiles", worldobjects, nil)
-                local stockpileContainer = submenu;getNew(submenu)
+                local stockpileContainer = submenu:getNew(submenu)
                 context:addSubMenu(addStockpileOption, stockpileContainer)
                 for _, object in pairs(worldobjects) do
                     local container = object:getContainer()
@@ -73,7 +66,7 @@ ShopMenu.doShopMenu = function(player, context, worldobjects, test)
                 end
             end
         end
-    end]]
+    end
 end
 
 ShopMenu.goToRegister = function(_, player, building)

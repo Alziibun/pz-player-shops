@@ -330,15 +330,6 @@ function Shop.fromRoom(square)
     end
 end
 
----@param square IsoGridSquare the square to search from
----@return Shop
-function Shop.fromRegion(square)
-    -- get a shop from the square's region, only searches the immediate region
-    local region = square:getIsoWorldRegion()
-    assert(region, "Unable to find region from square")
-    local squares = RegionHelper.getSquares(square)
-end
-
 ---load the instance from a file
 function Shop:load()
     local file = Perdition.FileManager:open(Shop.directory .. "/shop_"..tostring(self.id)..".txt")
