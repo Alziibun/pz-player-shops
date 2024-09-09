@@ -13,7 +13,7 @@ ShopMenu.doShopMenu = function(player, context, worldobjects, test)
     local square = player:getSquare()
     -- currently only supports meta buildings
     room = square:getRoom()
-    if room then return end -- if there is no room end early
+    if not room then return end -- if there is no room end early
     shop = Shop.fromRoom(square)
     local option = context:addOption("Shop", worldobjects, nil)
     local submenu = ISContextMenu:getNew(context)
