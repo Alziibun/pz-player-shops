@@ -315,14 +315,18 @@ end
 function Shop.fromRoom(square)
     local room = square:getRoom()
     if room then
-        local building = room:getBuilding()
-        local containers = building:getContainers(region:getID())
-        for _, container in pairs(containers) do
-            local modData = container.object:getModData()
-            if modData then -- check if shop in room
-                if modData['ShopID'] then
-                    if Shop.list[modData['ShopID']] then -- check if the shop still exists
-                        return Shop.list[modData['ShopID']]
+        local squares = room:getSquares()
+        for i = 1, squares:size() do
+            local thisSquare = squares:get(i)
+            local objects = thisSquare:getObjects()
+            for k = 1, objects:size() do
+                local object = objects:get(k)
+                local modData = object:getModData()
+                if modData then -- check if shop in room
+                    if modData['ShopID'] then
+                        if Shop.list[modData['ShopID']] then -- check if the shop still exists
+                            return Shop.list[modData['ShopID']]
+                        end
                     end
                 end
             end
